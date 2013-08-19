@@ -15,7 +15,6 @@ use Silextension\OAuth\Server;
 use Silextension\OAuth\SignatureMethod\HMACSHA1 as SignatureHmacSha1;
 use Silextension\OAuth\Util;
 use Silextension\OAuth\Request;
-use RuntimeException;
 
 class OAuthProvider implements ServiceProviderInterface
 {

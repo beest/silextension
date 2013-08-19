@@ -5,6 +5,7 @@ namespace Silextension\Provider\Doctrine;
 use Silex\Application;
 use Silex\ServiceProviderInterface;
 use Silextension\Provider\Doctrine\CacheFactory;
+use RuntimeException;
 use Pimple;
 
 class CacheProvider implements ServiceProviderInterface
