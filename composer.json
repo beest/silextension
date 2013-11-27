@@ -2,9 +2,9 @@
     "name": "beest/silextension",
     "description": "Useful providers for the Silex framework.",
     "require": {
-        "symfony/config": ">=v2.3.3",
-        "symfony/yaml": ">=v2.3.3",
-        "symfony/http-foundation": ">=v2.3.3",
+        "symfony/config": "*",
+        "symfony/yaml": "*",
+        "symfony/http-foundation": "*",
         "silex/silex": ">=v1.1.0",
         "doctrine/orm": "*",
         "pimple/pimple": "*",
