@@ -6,8 +6,8 @@
         "symfony/yaml": ">=v2.3.3",
         "symfony/http-foundation": ">=v2.3.3",
         "silex/silex": ">=v1.1.0",
-        "doctrine/orm": ">=2.4.x-dev",
-        "pimple/pimple": ">=v1.0.2",
+        "doctrine/orm": "*",
+        "pimple/pimple": "*",
         "mockery/mockery": ">=0.8.0"
     },
     "authors": [
