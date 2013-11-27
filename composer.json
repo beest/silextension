@@ -5,9 +5,11 @@
         "symfony/config": "*",
         "symfony/yaml": "*",
         "symfony/http-foundation": "*",
-        "silex/silex": ">=v1.1.0",
+        "silex/silex": "*",
         "doctrine/orm": "*",
-        "pimple/pimple": "*",
+        "pimple/pimple": "*"
+    },
+    "require-dev": {
         "mockery/mockery": ">=0.8.0"
     },
     "authors": [
