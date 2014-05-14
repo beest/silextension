@@ -39,7 +39,6 @@ class ConfigProviderTest extends TestCase
         );
 
         $app->register(new ConfigProvider);
-        $app->boot();
 
         $this->assertEquals($app['config']['bar'], $fooBar);
         $this->assertEquals($app['config']['baz'], $fooBaz);
@@ -56,7 +55,6 @@ class ConfigProviderTest extends TestCase
         $app['config.loader'] = $loader;
 
         $app->register(new ConfigProvider);
-        $app->boot();
     }
 
     /**
@@ -67,6 +65,5 @@ class ConfigProviderTest extends TestCase
         $app = new Application();
 
         $app->register(new ConfigProvider);
-        $app->boot();
     }
 }

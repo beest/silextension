@@ -6,6 +6,7 @@
         "symfony/yaml": "*",
         "symfony/http-foundation": "*",
         "silex/silex": "*",
+        "doctrine/common": "*",
         "doctrine/orm": "*",
         "pimple/pimple": "*"
     },

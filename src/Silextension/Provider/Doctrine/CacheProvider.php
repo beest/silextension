@@ -2,62 +2,59 @@
 
 namespace Silextension\Provider\Doctrine;
 
-use Silex\Application;
-use Silex\ServiceProviderInterface;
-use Silextension\Provider\Doctrine\CacheFactory;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use RuntimeException;
-use Pimple;
+use Silex\Application;
+use Silextension\Provider\Doctrine\CacheFactory;
 
 class CacheProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $container)
     {
-        if (!isset($app['cache.cache_factory'])) {
+        if (!isset($container['cache.cache_factory'])) {
             // Create the default cache factory
-            $app['cache.cache_factory'] = $app->share(function($app) {
+            $container['cache.cache_factory'] = function($container) {
                 return new CacheFactory;
-           });
+           };
         }
-    }
 
-    public function boot(Application $app)
-    {
-        if (!isset($app['config'])) {
+        if (!isset($container['config'])) {
             throw new RuntimeException('No config for ORM');
         }
 
-        $config = $app['config'];
+        $config = $container['config'];
 
         if (isset($config['cache'])) {
             if (array_key_exists('driver', $config['cache'])) {
-                // Single cache e.g. $app['cache']
-                $app['cache'] = $this->createCache($app, $config['cache']);
+                // Single cache e.g. $container['cache']
+                $container['cache'] = $this->createCache($container, $config['cache']);
             } else {
-                // Multiple caches e.g. $app['cache']['name']
+                // Multiple caches e.g. $container['cache']['name']
                 // These are loaded on-demand via a Pimple container
-                $container = new Pimple;
+                $caches = new Container;
 
                 $self = $this;
 
                 foreach ($config['cache'] as $name => $options) {
-                    $container[$name] = $container->share(function($container) use ($self, $app, $options) {
-                        return $self->createCache($app, $options);
-                    });
+                    $caches[$name] = function($container) use ($self, $container, $options) {
+                        return $self->createCache($container, $options);
+                    };
                 }
 
-                $app['cache'] = $container;
+                $container['cache'] = $caches;
             }
         }
     }
 
-    public function createCache(Application $app, array $options = array())
+    public function createCache(Container $container, array $options = array())
     {
         // If no driver specified then default to array cache
         $driver = isset($options['driver']) ? $options['driver'] : 'array';
 
         // Optionally provide a Memcache object
-        $memcache = isset($app['cache.memcache']) ? $app['cache.memcache'] : null;
+        $memcache = isset($container['cache.memcache']) ? $container['cache.memcache'] : null;
 
-        return $app['cache.cache_factory']->createCache($driver, $memcache);
+        return $container['cache.cache_factory']->createCache($driver, $memcache);
     }
 }

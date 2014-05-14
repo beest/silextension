@@ -24,8 +24,6 @@ class ConnectionProviderTest extends TestCase
             'database' => $options
         );
 
-        $app->register(new ConnectionProvider);
-
         $connection = Mockery::mock('Doctrine\DBAL\Driver\PDOMySql\Driver');
 
         $connectionFactory = Mockery::mock('Silextension\Provider\Doctrine\ConnectionFactory');
@@ -37,7 +35,7 @@ class ConnectionProviderTest extends TestCase
 
         $app['doctrine.connection_factory'] = $connectionFactory;
 
-        $app->boot();
+        $app->register(new ConnectionProvider);
 
         $this->assertEquals($app['database'], $connection);
     }
@@ -79,8 +77,6 @@ class ConnectionProviderTest extends TestCase
             ->andReturn($sqliteConnection);
 
         $app['doctrine.connection_factory'] = $connectionFactory;
-
-        $app->boot();
 
         $this->assertInstanceOf('Pimple', $app['database']);
         $this->assertEquals($app['database']['primary'], $connection);

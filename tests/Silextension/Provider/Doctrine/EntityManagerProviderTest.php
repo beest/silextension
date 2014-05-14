@@ -54,7 +54,6 @@ class EntityManagerProviderTest extends TestCase
         $app['doctrine.entity_manager_factory'] = $entityManagerFactory;
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
 
         $this->assertEquals($app['doctrine.em'], $entityManager);
     }
@@ -131,7 +130,6 @@ class EntityManagerProviderTest extends TestCase
         $app['doctrine.entity_manager_factory'] = $entityManagerFactory;
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
 
         $this->assertEquals($app['doctrine.em']['test1'], $entityManager1);
         $this->assertEquals($app['doctrine.em']['test2'], $entityManager2);
@@ -144,7 +142,6 @@ class EntityManagerProviderTest extends TestCase
     {
         $app = new Application;
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -164,7 +161,6 @@ class EntityManagerProviderTest extends TestCase
         );
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -186,7 +182,6 @@ class EntityManagerProviderTest extends TestCase
         $app['database'] = array();
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -209,7 +204,6 @@ class EntityManagerProviderTest extends TestCase
         $app['cache'] = Mockery::mock('Doctrine\Common\Cache\Cache');
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -234,7 +228,6 @@ class EntityManagerProviderTest extends TestCase
         $app['cache'] = Mockery::mock('Doctrine\Common\Cache\Cache');
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -260,7 +253,6 @@ class EntityManagerProviderTest extends TestCase
         $app['cache'] = Mockery::mock('Doctrine\Common\Cache\Cache');
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -283,7 +275,6 @@ class EntityManagerProviderTest extends TestCase
         $app['cache'] = 'test';
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -308,7 +299,6 @@ class EntityManagerProviderTest extends TestCase
         $app['cache'] = array();
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 
     /**
@@ -334,6 +324,5 @@ class EntityManagerProviderTest extends TestCase
         );
 
         $app->register(new EntityManagerProvider);
-        $app->boot();
     }
 }

@@ -2,45 +2,41 @@
 
 namespace Silextension\Provider;
 
-use Silex\Application;
-use Silex\ServiceProviderInterface;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use RuntimeException;
-use Pimple;
+use Silex\Application;
+use Symfony\Component\Config\Loader\LoaderInterface;
 
 class ConfigProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $container)
     {
-    }
-
-    public function boot(Application $app)
-    {
-        if (!isset($app['config.loader']) || !($app['config.loader'] instanceof LoaderInterface)) {
+        if (!isset($container['config.loader']) || !($container['config.loader'] instanceof LoaderInterface)) {
             throw new RuntimeException('Config loader not provided');
         }
 
-        if (!isset($app['config.files'])) {
+        if (!isset($container['config.files'])) {
             throw new RuntimeException('No config files');
         }
 
-        $app['config'] = $app->share(function ($app) {
+        $container['config'] = function ($container) {
             // Here we are lazy loading each individual config file via another Pimple instance
-            // $app['config'] will return the Pimple instance
-            // $app['config']['key'] will load and parse a single config file on-demand
+            // $container['config'] will return the Pimple instance
+            // $container['config']['key'] will load and parse a single config file on-demand
 
-            $config = new Pimple;
+            $config = new Container;
 
-            $files = (array)$app['config.files'];
-            $path = isset($app['config.path']) ? $app['config.path'] : '';
+            $files = (array)$container['config.files'];
+            $path = isset($container['config.path']) ? $container['config.path'] : '';
 
             foreach ($files as $key => $file) {
-                $config[$key] = $config->share(function ($config) use ($app, $path, $file) {
-                    return $app['config.loader']->load($path . '/' . $file);
-                });
+                $config[$key] = function ($config) use ($container, $path, $file) {
+                    return $container['config.loader']->load($path . '/' . $file);
+                };
             }
 
             return $config;
-        });
+        };
     }
 }

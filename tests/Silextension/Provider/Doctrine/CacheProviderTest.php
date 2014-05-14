@@ -23,8 +23,6 @@ class CacheProviderTest extends TestCase
             )
         );
 
-        $app->register(new CacheProvider);
-
         $arrayCache = Mockery::mock('Doctrine\Common\Cache\ArrayCache');
 
         $cacheFactory = Mockery::mock('Silextension\Provider\Doctrine\CacheFactory');
@@ -36,7 +34,7 @@ class CacheProviderTest extends TestCase
 
         $app['cache.cache_factory'] = $cacheFactory;
 
-        $app->boot();
+        $app->register(new CacheProvider);
 
         $this->assertInstanceOf('Doctrine\Common\Cache\ArrayCache', $app['cache']);
         $this->assertEquals($app['cache'], $arrayCache);
@@ -62,7 +60,7 @@ class CacheProviderTest extends TestCase
         $arrayCachePrimary = Mockery::mock('Doctrine\Common\Cache\ArrayCache');
         $arrayCacheSecondary = Mockery::mock('Doctrine\Common\Cache\ArrayCache');
 
-        $app['cache.cache_factory'] = $app->share(function($app) use ($arrayCachePrimary, $arrayCacheSecondary) {
+        $app['cache.cache_factory'] = function($app) use ($arrayCachePrimary, $arrayCacheSecondary) {
 
             $cacheFactory = Mockery::mock('Silextension\Provider\Doctrine\CacheFactory');
             $cacheFactory
@@ -77,9 +75,7 @@ class CacheProviderTest extends TestCase
                 ->andReturn($arrayCacheSecondary);
 
             return $cacheFactory;
-        });
-
-        $app->boot();
+        };
 
         $this->assertInstanceOf('Pimple', $app['cache']);
         $this->assertEquals($app['cache']['primary'], $arrayCachePrimary);

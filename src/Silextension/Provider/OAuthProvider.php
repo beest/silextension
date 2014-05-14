@@ -7,24 +7,25 @@
 
 namespace Silextension\Provider;
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Silextension\OAuth\DataStore\Test as TestDataStore;
 use Silextension\OAuth\Server;
 use Silextension\OAuth\SignatureMethod\HMACSHA1 as SignatureHmacSha1;
 use Silextension\OAuth\Util;
 use Silextension\OAuth\Request;
+use Symfony\Component\HttpFoundation\Request;
 
 class OAuthProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $container)
     {
         $oauthDataStore = new TestDataStore();
         $oauthServer = new Server($oauthDataStore);
         $oauthServer->add_signature_method(new SignatureHmacSha1());
 
-        $app->before(function(Request $request) use ($oauthServer)
+        $container['app']->before(function(Request $request) use ($oauthServer)
         {
             // Construct the full URL including port
             // This will be normalized by the OAuthRequest class
@@ -57,9 +58,5 @@ class OAuthProvider implements ServiceProviderInterface
             $oauthRequest = new Request($method, $url, $params);
             $oauthServer->verify_request($oauthRequest);
         });
-    }
-
-    public function boot(Application $app)
-    {
     }
 }

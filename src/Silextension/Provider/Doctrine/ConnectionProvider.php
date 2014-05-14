@@ -2,52 +2,49 @@
 
 namespace Silextension\Provider\Doctrine;
 
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 use Silex\Application;
-use Silex\ServiceProviderInterface;
 use Silextension\Provider\Doctrine\ConnectionFactory;
-use Pimple;
 
 class ConnectionProvider implements ServiceProviderInterface
 {
-    public function register(Application $app)
+    public function register(Container $container)
     {
-        if (!isset($app['doctrine.connection_factory'])) {
-            $app['doctrine.connection_factory'] = $app->share(function($app) {
+        if (!isset($container['doctrine.connection_factory'])) {
+            $container['doctrine.connection_factory'] = function($container) {
                 return new ConnectionFactory;
-            });
+            };
         }
-    }
 
-    public function boot(Application $app)
-    {
-        $config = isset($app['config']) ? $app['config'] : array();
+        $config = isset($container['config']) ? $container['config'] : array();
 
         if (isset($config['database'])) {
             if (array_key_exists('driver', $config['database'])) {
-                // Single database e.g. $app['database']
+                // Single database e.g. $container['database']
                 $options = $config['database'];
 
-                $app['database'] = $this->createDriver($app, $options);
+                $container['database'] = $this->createDriver($container, $options);
             } else {
-                // Multiple databases e.g. $app['database']['name']
+                // Multiple databases e.g. $container['database']['name']
                 // These are loaded on-demand via a Pimple container
-                $container = new Pimple;
+                $databases = new Container;
 
                 $self = $this;
 
                 foreach ($config['database'] as $name => $options) {
-                    $container[$name] = $container->share(function($container) use ($self, $app, $options) {
-                        return $self->createDriver($app, $options);
-                    });
+                    $databases[$name] = function($container) use ($self, $container, $options) {
+                        return $self->createDriver($container, $options);
+                    };
                 }
 
-                $app['database'] = $container;
+                $container['database'] = $databases;
             }
         }
     }
 
-    public function createDriver(Application $app, array $options = array())
+    public function createDriver(Container $container, array $options = array())
     {
-        return $app['doctrine.connection_factory']->createConnection($options);
+        return $container['doctrine.connection_factory']->createConnection($options);
     }
 }
